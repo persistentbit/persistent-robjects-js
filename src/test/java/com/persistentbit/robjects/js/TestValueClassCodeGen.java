@@ -24,7 +24,7 @@ public class TestValueClassCodeGen {
     @Test
     public void testGenerics(){
         JJMapper mapper = new JJMapper();
-        JJTypeDescription td = mapper.describe(Tuple2.class);
+        JJTypeDescription td = mapper.describe(ValueWithGen.class);
         CodeGenValueClass cg = new CodeGenValueClass(td);
         cg.generate();
         cg.write(System.out);
