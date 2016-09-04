@@ -37,7 +37,7 @@ public class CodeGenValueClass extends SourceGen{
 
         bs(className + ".fromJson = function(json)");{
             println("return new " + className + "(" +
-                     td.getProperties().map(p -> propFromJson("json." + p.getName(),p.getTypeSignature())).toString(",")
+                     td.getProperties().map(p -> propFromJson("json." + p.getName(),p.getName(),p.getTypeSignature())).toString(",")
                     + ");");
         be("};");}
         td.getProperties().forEach(p -> {
@@ -69,52 +69,34 @@ public class CodeGenValueClass extends SourceGen{
         return "valueObjectToJson(this._data._" + prop.getName() + ")";
     }
 
-    private String propFromJson(String jsonData,JJTypeSignature sig){
-        if(sig.getJsonType() != JJTypeSignature.JsonType.jsonObject){
-            return "json." + jsonData;
-        }
-        String simpleName = toSimpleName(sig.getJavaClassName());
-        if(simpleName.equals("Object")){
-
-            return "this._data._fromJson"+ sig.getGenerics().keys().head() + "(" + jsonData + ")";
-        }
-        /*if(simpleName.equals("Object") == false){
-            String res = simpleName + ".fromJson(" + jsonData;
-            if(sig.getGenerics().isEmpty() == false) { res += ","; }
-            for(Tuple2<String,JJTypeSignature> genTuple : sig.getGenerics()){
-                jsonData = "this.data._fromJson" + genTuple._1 + "(" + jsonData + ")";
-            }
-            return jsonData;
-        }*/
-        //String res = simpleName + ".fromJson(" + jsonData + ",";
-        //res += sig.getGenerics().map(t -> "fromJson" + t._1).toString(",");
-        //for(Tuple2<String,JJTypeSignature> genTuple : sig.getGenerics()){
-        //    jsonData = "this.data._fromJson" + genTuple._1 + "(" + jsonData + ")";
-        //}
-        return res + ")";
-/*
-        String res = toSimpleName(sig.getJavaClassName())+".(";
-
-
-        for(Tuple2<String,JJTypeSignature> gen = sig.getGenerics()){
-            return
-        }
-        if(gen == null){
-            return "json." + prop.getName();
-        }
-
-        //throw new RuntimeException("Not yet");
-        return "?";*/
+    private String propFromJson(String jsonData,String name,JJTypeSignature sig){
+        return resolveGenerics(jsonData,name,sig);
     }
-    private String resolveGenerics(String name, JJTypeSignature typeSignature){
+
+
+
+    private String resolveGenerics(String json,String name, JJTypeSignature typeSignature){
+        if(typeSignature.getJsonType() != JJTypeSignature.JsonType.jsonObject){
+            return "function(a) { return a; }";
+        }
         String simpleName = toSimpleName(typeSignature.getJavaClassName());
-        if(simpleName == "Object"){
+        if(td.getTypeSignature().getGenerics().keys().contains(simpleName)){
+            return "this._data_.fromJson" + name;
+        }
+        if(simpleName.equalsIgnoreCase("object")){
+
             if(typeSignature.getGenerics().isEmpty()){
-                return "this._data_.fromJson" + name;
+                return "this._data_.fromJson" + name ;//+ "(" + json + ")";
             }
             Tuple2<String,JJTypeSignature> subGen = typeSignature.getGenerics().head();
-            return resolveGenerics(json,typeSignature.getGenerics().he)
+            return resolveGenerics(json,subGen._1,subGen._2);
         }
+        String res = simpleName + ".fromJson(" + json ;
+        if(typeSignature.getGenerics().isEmpty() == false) {
+            res += ",";
+        }
+        res += typeSignature.getGenerics().map(t -> resolveGenerics(json,t._1, t._2)).toString(",");
+        return res + ")";
     }
 
 
