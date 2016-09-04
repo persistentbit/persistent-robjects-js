@@ -69,34 +69,33 @@ public class CodeGenValueClass extends SourceGen{
         return "valueObjectToJson(this._data._" + prop.getName() + ")";
     }
 
-    private String propFromJson(String jsonData,String name,JJTypeSignature sig){
-        return resolveGenerics(jsonData,name,sig);
-    }
-
-
-
-    private String resolveGenerics(String json,String name, JJTypeSignature typeSignature){
-        if(typeSignature.getJsonType() != JJTypeSignature.JsonType.jsonObject){
+    private String propFromJson(String json,String name,JJTypeSignature sig){
+        if(sig.getJsonType() != JJTypeSignature.JsonType.jsonObject){
             return "function(a) { return a; }";
         }
-        String simpleName = toSimpleName(typeSignature.getJavaClassName());
+
+
+
+        String simpleName = toSimpleName(sig.getJavaClassName());
         if(td.getTypeSignature().getGenerics().keys().contains(simpleName)){
             return "this._data_.fromJson" + name;
         }
+
         if(simpleName.equalsIgnoreCase("object")){
 
-            if(typeSignature.getGenerics().isEmpty()){
-                return "this._data_.fromJson" + name ;//+ "(" + json + ")";
+            if(sig.getGenerics().isEmpty()){
+                return "this._data_.fromJson" + name +"(" + json + ")";
             }
-            Tuple2<String,JJTypeSignature> subGen = typeSignature.getGenerics().head();
-            return resolveGenerics(json,subGen._1,subGen._2);
+            Tuple2<String,JJTypeSignature> subGen = sig.getGenerics().head();
+            return propFromJson(json,subGen._1,subGen._2);
         }
         String res = simpleName + ".fromJson(" + json ;
-        if(typeSignature.getGenerics().isEmpty() == false) {
+        if(sig.getGenerics().isEmpty() == false) {
             res += ",";
         }
-        res += typeSignature.getGenerics().map(t -> resolveGenerics(json,t._1, t._2)).toString(",");
+        res += sig.getGenerics().map(t -> propFromJson(json,t._1, t._2)).toString(",");
         return res + ")";
+
     }
 
 
