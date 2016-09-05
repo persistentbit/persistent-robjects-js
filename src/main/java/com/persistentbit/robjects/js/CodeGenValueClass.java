@@ -65,7 +65,7 @@ public class CodeGenValueClass{
                         + ");");
                 be("};");}
             td.getProperties().forEach(p -> {
-                bs("Object.defineProperty(" + className + ".prototype, " + p.getName() + ",");{
+                bs("Object.defineProperty(" + className + ".prototype, " + str(p.getName()) + ",");{
                     println("get: function() { return this._data._" + p.getName() + "},");
                     println("enumerable: true, configurable: true");
                     be("});");}
