@@ -1,7 +1,6 @@
 package com.persistentbit.robjects.js;
 
 import com.persistentbit.core.Tuple2;
-import com.persistentbit.core.collections.PStream;
 import com.persistentbit.jjson.mapping.JJMapper;
 import com.persistentbit.jjson.mapping.description.JJPropertyDescription;
 import com.persistentbit.jjson.mapping.description.JJTypeDescription;
@@ -32,7 +31,7 @@ public class CodeGenValueClass{
         return generate(td);
     }
 
-    class Generator  extends SourceGen{
+    class Generator  extends AbstractCodeGen{
         private JJTypeDescription td;
         private String className;
 
@@ -134,33 +133,7 @@ public class CodeGenValueClass{
         }
 
 
-        private  String prefixNotEmpty(PStream<String> stream, String value){
-            System.out.println(stream);
-            if(stream.isEmpty()){
-                return "";
-            }
-            return value + stream.toString(value);
-        }
 
-        private void printAsLines(PStream<?> items, String sep){
-            int cnt = items.size();
-            for(Object o  : items){
-                cnt--;
-                String s = cnt == 0? "" : sep;
-                println(o.toString() + s);
-            }
-        }
-
-        private String toSimpleName(String name){
-            int i = name.lastIndexOf('.');
-            if(i >=0){
-                name = name.substring(i+1);
-            }
-            return name.replace('$','_');
-        }
-        private String firstCap(String name){
-            return Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        }
     }
 
 
