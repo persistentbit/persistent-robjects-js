@@ -59,7 +59,8 @@ public class CodeGenValueClass{
                     be("};");}
                 be("};");}
 
-            bs(className + ".fromJson = function(json)");{
+
+            bs(className + ".fromJson = function(json" + prefixNotEmpty(td.getTypeSignature().getGenerics().keys().map(n -> "fromJson" +n ),",") + ")");{
                 println("return new " + className + "(" +
                         td.getProperties().map(p -> propFromJson(true,"json." + p.getName(),p.getName(),p.getTypeSignature())).toString(",")
                         + ");");
@@ -113,23 +114,33 @@ public class CodeGenValueClass{
 
                 if(sig.getGenerics().isEmpty()){
                     if(asValue) {
-                        return  "this._data.fromJson" + name + "(" + json + ")";
+                        return  "fromJson" + name + "(" + json + ")";
                     }
-                    return "this._data.fromJson" + name;
+                    return "fromJson" + name;
                 }
                 Tuple2<String,JJTypeSignature> subGen = sig.getGenerics().head();
                 return propFromJson(asValue,json,subGen._1,subGen._2);
             }
-            String res = simpleName + ".fromJson(" + json ;
+            String res = simpleName + ".fromJson(" + (asValue ? json : "v");
             if(sig.getGenerics().isEmpty() == false) {
                 res += ",";
             }
             res += sig.getGenerics().map(t -> propFromJson(false,json,t._1, t._2)).toString(",");
-            return res + ")";
-
+            res += ")";
+            if(asValue == false){
+                return "function(v) { return " + res + "; }";
+            }
+            return res;
         }
 
 
+        private  String prefixNotEmpty(PStream<String> stream, String value){
+            System.out.println(stream);
+            if(stream.isEmpty()){
+                return "";
+            }
+            return value + stream.toString(value);
+        }
 
         private void printAsLines(PStream<?> items, String sep){
             int cnt = items.size();

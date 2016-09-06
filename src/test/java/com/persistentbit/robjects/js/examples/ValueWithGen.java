@@ -5,14 +5,16 @@ import com.persistentbit.core.Tuple2;
 /**
  * Created by petermuys on 3/09/16.
  */
-public class ValueWithGen<A> {
+public class ValueWithGen<A,B> {
     public A valueA;
     public Tuple2<A,String> tupleAString;
+    public Tuple2<Integer,Tuple2<A,B>> tuple_IntTupleAB;
     public String justAString;
-    public Tuple2<Tuple2<A,Integer>,Double> tupleTupleAIntDouble;
-    public ValueWithGen(A valueA, Tuple2<A, String> tupleAString,String justAString,Tuple2<Tuple2<A,Integer>,Double> tupleTupleAIntDouble) {
+
+    public ValueWithGen(A valueA, Tuple2<A, String> tupleAString,Tuple2<Integer,Tuple2<A,B>> tuple_IntTupleAB,String justAString) {
         this.valueA = valueA;
         this.tupleAString = tupleAString;
-        this.tupleTupleAIntDouble = tupleTupleAIntDouble;
+        this.tuple_IntTupleAB = tuple_IntTupleAB;
+        this.justAString = justAString;
     }
 }

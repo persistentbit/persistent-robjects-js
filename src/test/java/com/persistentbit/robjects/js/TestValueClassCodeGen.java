@@ -3,6 +3,7 @@ package com.persistentbit.robjects.js;
 import com.persistentbit.core.collections.PStream;
 import com.persistentbit.jjson.mapping.JJMapper;
 import com.persistentbit.jjson.mapping.description.JJTypeDescription;
+import com.persistentbit.jjson.nodes.JJPrinter;
 import com.persistentbit.robjects.js.examples.Name;
 import com.persistentbit.robjects.js.examples.Person;
 import com.persistentbit.robjects.js.examples.ValueWithGen;
@@ -28,6 +29,8 @@ public class TestValueClassCodeGen {
     public void testGenerics(){
         JJMapper mapper = new JJMapper();
         JJTypeDescription td = mapper.describe(ValueWithGen.class);
+
+        System.out.println(JJPrinter.print(true ,mapper.write(td)));
         CodeGenValueClass cg = new CodeGenValueClass();
         cg.generate(td).write(System.out);
     }
