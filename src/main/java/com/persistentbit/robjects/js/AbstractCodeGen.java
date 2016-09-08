@@ -8,8 +8,8 @@ import com.persistentbit.sourcegen.SourceGen;
  * @since 6/09/2016
  */
 public class AbstractCodeGen extends SourceGen{
+
     protected  String prefixNotEmpty(PStream<String> stream, String value){
-        System.out.println(stream);
         if(stream.isEmpty()){
             return "";
         }
