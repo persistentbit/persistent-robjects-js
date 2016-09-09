@@ -10,7 +10,7 @@ import org.junit.Test;
 public class TestRemoteClassCodeGen {
     @Test
     public void testApiCodeGen(){
-        String s =new CodeGenRemoteClass().generateAll(App.class).writeToString();
+        String s =new CodeGenRemoteClass(new JSCodeGenSettings(JSCodeGenSettings.ModuleType.commonJs, JSCodeGenSettings.CodeType.js5)).generateAll(App.class).writeToString();
         System.err.println(s);
     }
 }

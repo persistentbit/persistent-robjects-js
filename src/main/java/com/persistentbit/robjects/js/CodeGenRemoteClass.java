@@ -14,13 +14,15 @@ import com.persistentbit.sourcegen.SourceGen;
 public class CodeGenRemoteClass {
     private final JJMapper mapper;
     private final CodeGenValueClass codeGenValueClass;
+    private final JSCodeGenSettings settings;
 
-    public CodeGenRemoteClass(){
-        this(new CodeGenValueClass(),new JJMapper());
+    public CodeGenRemoteClass(JSCodeGenSettings codeGenSettings){
+        this(new CodeGenValueClass(codeGenSettings),new JJMapper());
     }
     public CodeGenRemoteClass(CodeGenValueClass codeGenValueClass,JJMapper mapper){
         this.codeGenValueClass = codeGenValueClass;
         this.mapper = mapper;
+        this.settings = codeGenValueClass.getSettings();
     }
     public SourceGen generate(RemoteClassDescription cd){
         Generator g = new Generator(cd);

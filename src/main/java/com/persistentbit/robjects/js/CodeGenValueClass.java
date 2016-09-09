@@ -13,8 +13,13 @@ import com.persistentbit.sourcegen.SourceGen;
  */
 public class CodeGenValueClass{
 
-    public CodeGenValueClass(){
+    private final JSCodeGenSettings settings;
+    public CodeGenValueClass(JSCodeGenSettings settings){
+        this.settings = settings;
+    }
 
+    public JSCodeGenSettings getSettings() {
+        return settings;
     }
 
     public SourceGen generate(JJTypeDescription td){

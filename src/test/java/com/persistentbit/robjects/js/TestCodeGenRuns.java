@@ -12,13 +12,13 @@ import org.junit.Test;
  * @since 7/09/2016
  */
 public class TestCodeGenRuns {
-
+    private final JSCodeGenSettings settings = new JSCodeGenSettings(JSCodeGenSettings.ModuleType.none, JSCodeGenSettings.CodeType.js5);
 
     @Test
     public void testValueClasses() {
         JavascriptTester rt = new JavascriptTester();
 
-        CodeGenValueClass cgv = new CodeGenValueClass();
+        CodeGenValueClass cgv = new CodeGenValueClass(settings);
         rt.add(cgv.generate(Tuple2.class).writeToString());
         rt.add(cgv.generate(Name.class).writeToString());
         rt.add(cgv.generate(ValueWithGen.class).writeToString());

@@ -16,11 +16,11 @@ import javax.script.*;
  * Created by petermuys on 3/09/16.
  */
 public class TestValueClassCodeGen {
-
+    private final JSCodeGenSettings settings = new JSCodeGenSettings(JSCodeGenSettings.ModuleType.none, JSCodeGenSettings.CodeType.js5);
     @Test
     public void testSimpleValueClass(){
 
-        CodeGenValueClass cg = new CodeGenValueClass();
+        CodeGenValueClass cg = new CodeGenValueClass(settings);
         String s = cg.generate(Name.class).writeToString();
         s += cg.generate(Person.class).writeToString();
         runJs(s);
@@ -31,7 +31,7 @@ public class TestValueClassCodeGen {
         JJTypeDescription td = mapper.describe(ValueWithGen.class);
 
         System.out.println(JJPrinter.print(true ,mapper.write(td)));
-        CodeGenValueClass cg = new CodeGenValueClass();
+        CodeGenValueClass cg = new CodeGenValueClass(settings);
         cg.generate(td).write(System.out);
     }
 
