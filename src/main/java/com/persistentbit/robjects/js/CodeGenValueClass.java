@@ -49,7 +49,7 @@ public class CodeGenValueClass{
             bs("var " + className + " = function(" + td.getProperties().map(i -> i.getName()).toString(",") + ")");{
                 bs("this._data = ");{
                     printAsLines(
-                            td.getProperties().map(p -> "_" + p.getName() + " : " + p.getName())
+                            td.getProperties().map(p -> "_" + p.getName() + " : typeof " + p.getName() + " === 'undefined' ? null : " + p.getName())
                             ,",");
 
                     be("};");}
@@ -61,6 +61,23 @@ public class CodeGenValueClass{
                         td.getProperties().map(p -> propFromJson(true,"json." + p.getName(),p.getName(),p.getTypeSignature())).toString(",")
                         + ");");
                 be("};");}
+            /* OLD VERSION
+            bs(className + ".prototype.json = function("+ td.getTypeSignature().getGenerics().keys().map(g -> "toJson" + g ).toString(",") + ")");{
+                bs("return ");{
+                    printAsLines(td.getProperties().map(p -> p.getName() + ": " + propToJson(p.getName(),p.getTypeSignature())),",");
+                    be("};");}
+                be("};");}
+            */
+            bs(className + ".prototype.jsonData = function()");{
+                bs("return ");{
+                    printAsLines(td.getProperties().map(p -> {
+                        String name = p.getName();
+                        String thisName = "this." + name;
+                        return  name + ": " + thisName +" == null ? null : (typeof " + thisName  + " == 'object' ? "+thisName + ".json() : "+ thisName  + ")";
+                    }),",");
+                    be("};");}
+                be("};");}
+            println(className + ".prototype.json = function() { return JSON.stringify(this.jsonData()); }");
             td.getProperties().forEach(p -> {
                 bs("Object.defineProperty(" + className + ".prototype, " + str(p.getName()) + ",");{
                     println("get: function() { return this._data._" + p.getName() + "},");
@@ -75,12 +92,41 @@ public class CodeGenValueClass{
                     );
                     be("};");}
             });
+            bs(className + ".prototype.equals = function(other)"); {
+                println("if(!other) { return false; }");
+                println("if(this === other) { return true; }");
+                td.getProperties().forEach(p -> {
+                    String name = p.getName();
+                    String thisName = "this." + name;
+                    String otherName = "other." + name;
+                    //if (firstName != null ? !firstName.equals(name.firstName) : name.firstName != null) return false;
 
-            bs(className + ".prototype.json = function("+ td.getTypeSignature().getGenerics().keys().map(g -> "toJson" + g ).toString(",") + ")");{
-                bs("return ");{
-                    printAsLines(td.getProperties().map(p -> p.getName() + ": " + propToJson(p.getName(),p.getTypeSignature())),",");
-                    be("};");}
-                be("};");}
+
+
+                        if(p.getTypeSignature().getJsonType().isJsonPrimitive()){
+                            println("if(" + thisName + "!== " + otherName + ") { return false; }");
+                        } else if(p.getTypeSignature().getJsonType().isJsonCollection()){
+                            throw new RuntimeException("Not Yet");
+                        } else {
+                            String notEqual = "(typeof " + thisName + " === 'object' ? !" + thisName + ".equals(" + otherName + ") : " + thisName + " !== " + otherName+")";
+
+                            if(p.getTypeSignature().getGenerics().isEmpty()) {
+                                notEqual =  "!" + thisName + ".equals(" + otherName + ")";
+                            }
+                            println("if(" + thisName + " !== null ? " + notEqual +" : " + otherName + "!== null) { return false; }" );
+                        }
+
+                });
+                println("return true; ");
+            be("};");}
+
+
+        }
+        private String isDefined(String value){
+            return "(" + value + " !== null && typeof " + value + "!== 'undefined')";
+        }
+        private String isUndefined(String value){
+            return "(" + value + " === null || typeof " + value + "=== 'undefined')";
         }
 
         private String propToJson(String name,JJTypeSignature sig){
@@ -92,8 +138,11 @@ public class CodeGenValueClass{
             if(jt.isJsonCollection()){
                 throw new RuntimeException("Not Yet");
             }
-
             String generics = sig.getGenerics().map(tgt -> toJsonGenerics(tgt._1,tgt._2)).toString(",");
+            if(toSimpleName(sig.getJavaClassName()).equalsIgnoreCase("Object")){
+                //Assume this is one of the class generics...
+                return generics + "(" + value + ")";
+            }
 
             return value + ".json(" + generics + ")";
 
@@ -114,7 +163,7 @@ public class CodeGenValueClass{
             if(sig.getGenerics().size() == 1){
                 return allGenerics;
             }
-            return "function(v) { v.json(" + allGenerics + ")";
+            return "function(v) { return v.json(" + allGenerics + "); }";
 
         }
 

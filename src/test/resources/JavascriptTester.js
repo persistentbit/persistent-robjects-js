@@ -34,7 +34,10 @@ function clearTimeout(timer) {
 }
 
 function assert(value,message){
-    rt.Assert(value,message);
+    if(value){
+        return;
+    }
+    throw Error(message);
 }
 
 
