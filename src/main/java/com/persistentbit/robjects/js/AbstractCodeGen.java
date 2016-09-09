@@ -1,6 +1,7 @@
 package com.persistentbit.robjects.js;
 
 import com.persistentbit.core.collections.PStream;
+import com.persistentbit.jjson.mapping.description.JJClass;
 import com.persistentbit.sourcegen.SourceGen;
 
 /**
@@ -25,12 +26,12 @@ public class AbstractCodeGen extends SourceGen{
         }
     }
 
-    protected String toSimpleName(String name){
-        int i = name.lastIndexOf('.');
+    protected String toSimpleName(JJClass name){
+        /*int i = name.lastIndexOf('.');
         if(i >=0){
             name = name.substring(i+1);
-        }
-        return name.replace('$','_');
+        }*/
+        return name.getClassName().replace('$','_');
     }
     protected String firstCap(String name){
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);

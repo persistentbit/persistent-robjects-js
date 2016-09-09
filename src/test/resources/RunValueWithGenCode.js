@@ -13,7 +13,8 @@ var valueTest2 = new ValueWithGen(aVal,new Tuple2(aVal,"txt"), new Tuple2(1234,n
 assert(valueTest.equals(valueTest2),"valueTest2 is not equal");
 var valueTest2Json = valueTest2.jsonData();
 print("------");
-print(JSON.stringify(valueTest2Json));
+print("JSON valuetest2Json = " + JSON.stringify(valueTest2Json));
+print("JSON json = " + JSON.stringify(json));
 assert(JSON.stringify(valueTest2Json) === JSON.stringify(json),"json is not equal");
 var me = new Name("Peter","Muys");
 var valueTest3 = valueTest2.withValueA(me);

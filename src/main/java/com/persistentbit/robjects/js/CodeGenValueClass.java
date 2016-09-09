@@ -36,12 +36,12 @@ public class CodeGenValueClass{
 
         private Generator(JJTypeDescription td){
             this.td = td;
-            this.className = toSimpleName(td.getTypeSignature().getJavaClassName());
+            this.className = toSimpleName(td.getTypeSignature().getCls());
         }
 
 
         public void generate() {
-            className = toSimpleName(td.getTypeSignature().getJavaClassName());
+            className = toSimpleName(td.getTypeSignature().getCls());
             println("/*");
             println(" *   VALUE CLASS " + className);
             println("*/");
@@ -73,7 +73,12 @@ public class CodeGenValueClass{
                     printAsLines(td.getProperties().map(p -> {
                         String name = p.getName();
                         String thisName = "this." + name;
-                        return  name + ": " + thisName +" == null ? null : (typeof " + thisName  + " == 'object' ? "+thisName + ".json() : "+ thisName  + ")";
+                        if(p.getTypeSignature().getGenerics().isEmpty()){
+                            return  name + ": " + thisName;
+                        } else {
+                            return  name + ": " + thisName +" == null ? null : (typeof " + thisName  + " == 'object' ? "+thisName + ".jsonData() : "+ thisName  + ")";
+                        }
+
                     }),",");
                     be("};");}
                 be("};");}
@@ -139,7 +144,7 @@ public class CodeGenValueClass{
                 throw new RuntimeException("Not Yet");
             }
             String generics = sig.getGenerics().map(tgt -> toJsonGenerics(tgt._1,tgt._2)).toString(",");
-            if(toSimpleName(sig.getJavaClassName()).equalsIgnoreCase("Object")){
+            if(toSimpleName(sig.getCls()).equalsIgnoreCase("Object")){
                 //Assume this is one of the class generics...
                 return generics + "(" + value + ")";
             }
@@ -155,7 +160,7 @@ public class CodeGenValueClass{
             if(jt.isJsonCollection()){
                 throw new RuntimeException("Not Yet");
             }
-            String simpleName = toSimpleName(sig.getJavaClassName());
+            String simpleName = toSimpleName(sig.getCls());
             if(sig.getGenerics().isEmpty()){
                 return "toJson" + name;
             }
@@ -178,7 +183,7 @@ public class CodeGenValueClass{
 
 
 
-            String simpleName = toSimpleName(sig.getJavaClassName());
+            String simpleName = toSimpleName(sig.getCls());
             if(td.getTypeSignature().getGenerics().keys().contains(simpleName)){
                 return "this._data_.fromJson" + name;
             }

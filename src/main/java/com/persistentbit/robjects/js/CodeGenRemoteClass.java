@@ -31,7 +31,7 @@ public class CodeGenRemoteClass {
 
         RemoteServiceDescription rsd = new RemoteDescriber(mapper).descripeRemoteService(rootClass);
         SourceGen sg = new SourceGen();
-        sg.println("// VALUE CLASSES  for REMOTE SERVICE " + rsd.getRootSignature().getJavaClassName());
+        sg.println("// VALUE CLASSES  for REMOTE SERVICE " + rsd.getRootSignature().getCls());
         rsd.getValueObjects().forEach(rc -> {
             SourceGen csg = codeGenValueClass.generate(rc);
             sg.add(csg);
@@ -42,7 +42,7 @@ public class CodeGenRemoteClass {
     public SourceGen    generateRemotes(Class<?> rootClass){
         RemoteServiceDescription rsd = new RemoteDescriber(mapper).descripeRemoteService(rootClass);
         SourceGen sg = new SourceGen();
-        sg.println("// REMOTE CLASSES  for REMOTE SERVICE " + rsd.getRootSignature().getJavaClassName());
+        sg.println("// REMOTE CLASSES  for REMOTE SERVICE " + rsd.getRootSignature().getCls());
         rsd.getRemoteObjects().forEach(rc -> {
             Generator csg= new Generator(rc);
             csg.generate();
@@ -55,7 +55,7 @@ public class CodeGenRemoteClass {
     public SourceGen    generateAll(Class<?> rootClass){
         RemoteServiceDescription rsd = new RemoteDescriber(mapper).descripeRemoteService(rootClass);
         SourceGen sg = new SourceGen();
-        sg.println("// REMOTE SERVICE " + rsd.getRootSignature().getJavaClassName());
+        sg.println("// REMOTE SERVICE " + rsd.getRootSignature().getCls());
         sg.add(generateValues(rootClass));
         sg.add(generateRemotes(rootClass));
         return sg;
@@ -67,7 +67,7 @@ public class CodeGenRemoteClass {
 
         private Generator(RemoteClassDescription cd) {
             this.cd = cd;
-            this.className = toSimpleName(cd.getType().getJavaClassName());
+            this.className = toSimpleName(cd.getType().getCls());
         }
 
 
@@ -122,7 +122,7 @@ public class CodeGenRemoteClass {
             String converters = "";
             converters += prefixNotEmpty(typeSignature.getGenerics().values().map(gt -> fromJSonGenericsMapper(gt)),", ");
 
-            return toSimpleName(typeSignature.getJavaClassName()) + ".fromJson("+ json + converters + ")";
+            return toSimpleName(typeSignature.getCls()) + ".fromJson("+ json + converters + ")";
         }
         public String fromJSonGenericsMapper(JJTypeSignature typeSignature){
             JJTypeSignature.JsonType jsonType = typeSignature.getJsonType();
