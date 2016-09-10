@@ -36,21 +36,21 @@ public class CodeGenHelperClass extends AbstractCodeGen{
 
         bs(className + ".getJsonData = function(value)"); {
             println("if(value == null) { return null; }");
-            bs("if(typeof value === 'object')");{
-                println("return value.jsonData();");
-            be("}");}
             bs("if(value instanceof Array)"); {
                 println("return " + className + ".arrayMap(value,function(v) { return getJsonData(v); });");
+                be("}");}
+            bs("if(typeof value === 'object')");{
+                println("return value.jsonData();");
             be("}");}
             println("return value;");
         be("};");}
 
         bs(className + ".objectsEqual = function(left,right)"); {
-            bs("if(typeof left === 'object')");{
-                println("return left.equals(right);");
-            be("}");}
             bs("if(value instanceof Array)"); {
                 println("return " + className + ".arraysEqual(left,right," + className + ".objectsEqual);");
+                be("}");}
+            bs("if(typeof left === 'object')");{
+                println("return left.equals(right);");
             be("}");}
             println("return value;");
             be("};");}
