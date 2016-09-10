@@ -2,6 +2,7 @@ package com.persistentbit.robjects.js;
 
 import com.persistentbit.core.utils.BaseValueClass;
 
+
 /**
  * Created by petermuys on 9/09/16.
  */
@@ -13,11 +14,16 @@ public class JSCodeGenSettings extends BaseValueClass{
         js5,js6,typeScript
     }
     private final ModuleType moduleType;
-    private final CodeType codeType;
+    private final CodeType  codeType;
+    private final String    utilsClassName = "RObjectsUtils";
 
     public JSCodeGenSettings(ModuleType moduleType, CodeType codeType) {
         this.moduleType = moduleType;
         this.codeType = codeType;
+    }
+
+    public String getUtilsClassName() {
+        return utilsClassName;
     }
 
     public ModuleType getModuleType() {

@@ -5,6 +5,7 @@ import com.persistentbit.jjson.mapping.JJMapper;
 import com.persistentbit.jjson.nodes.JJPrinter;
 import com.persistentbit.robjects.js.examples.Name;
 import com.persistentbit.robjects.js.examples.ValueWithGen;
+import com.persistentbit.sourcegen.SourceGen;
 import org.junit.Test;
 
 /**
@@ -19,6 +20,8 @@ public class TestCodeGenRuns {
         JavascriptTester rt = new JavascriptTester();
 
         CodeGenValueClass cgv = new CodeGenValueClass(settings);
+        SourceGen helpers = CodeGenHelperClass.create(settings);
+        rt.add(helpers.writeToString());
         rt.add(cgv.generate(Tuple2.class).writeToString());
         rt.add(cgv.generate(Name.class).writeToString());
         rt.add(cgv.generate(ValueWithGen.class).writeToString());
