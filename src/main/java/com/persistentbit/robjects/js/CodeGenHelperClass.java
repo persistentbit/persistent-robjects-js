@@ -6,11 +6,10 @@ import com.persistentbit.sourcegen.SourceGen;
  * Created by petermuys on 10/09/16.
  */
 public class CodeGenHelperClass extends AbstractCodeGen{
-    private final JSCodeGenSettings settings;
     private final String className;
 
     private CodeGenHelperClass(JSCodeGenSettings settings){
-        this.settings = settings;
+        super(settings);
         this.className = settings.getUtilsClassName();
     }
 
@@ -37,7 +36,7 @@ public class CodeGenHelperClass extends AbstractCodeGen{
         bs(className + ".getJsonData = function(value)"); {
             println("if(value == null) { return null; }");
             bs("if(value instanceof Array)"); {
-                println("return " + className + ".arrayMap(value,function(v) { return getJsonData(v); });");
+                println("return " + className + ".arrayMap(value,function(v) { return "+ className + ".getJsonData(v); });");
                 be("}");}
             bs("if(typeof value === 'object')");{
                 println("return value.jsonData();");
@@ -46,13 +45,13 @@ public class CodeGenHelperClass extends AbstractCodeGen{
         be("};");}
 
         bs(className + ".objectsEqual = function(left,right)"); {
-            bs("if(value instanceof Array)"); {
+            bs("if(left instanceof Array)"); {
                 println("return " + className + ".arraysEqual(left,right," + className + ".objectsEqual);");
                 be("}");}
             bs("if(typeof left === 'object')");{
                 println("return left.equals(right);");
             be("}");}
-            println("return value;");
+            println("return left === right;");
             be("};");}
 
 

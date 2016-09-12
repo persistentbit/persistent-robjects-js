@@ -109,7 +109,7 @@ public class JavascriptTester {
     }
 
     void dump() {
-        PStream.from(script.split("\n")).zipWithIndex().forEach(t -> System.out.println("" + t._1 + ":\t" + t._2));
+        PStream.from(script.split("\n")).zipWithIndex().forEach(t -> System.out.println("" + (t._1+1) + ":\t" + t._2));
     }
 
 

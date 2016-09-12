@@ -24,6 +24,11 @@ public class CodeGenRemoteClass {
         this.mapper = mapper;
         this.settings = codeGenValueClass.getSettings();
     }
+
+    public SourceGen generateHelperClass() {
+        return CodeGenHelperClass.create(codeGenValueClass.getSettings());
+    }
+
     public SourceGen generate(RemoteClassDescription cd){
         Generator g = new Generator(cd);
         g.generate();
@@ -68,6 +73,7 @@ public class CodeGenRemoteClass {
         private String className;
 
         private Generator(RemoteClassDescription cd) {
+            super(CodeGenRemoteClass.this.settings);
             this.cd = cd;
             this.className = toSimpleName(cd.getType().getCls());
         }
@@ -97,13 +103,45 @@ public class CodeGenRemoteClass {
                     if(rmd.isCached()){
                         println("return " + fromJSon("this.Cached_" + rmd.getMethodName(),rmd.getReturnType()));
                     } else {
-                        ;
+                        bs("var rMethodCall = ");{
+                            println("methodToCall: this['md_" +  rmd.getMethodName()+ "'],");
+                            bs("arguments: ["); {
+                                printAsLines(rmd.getParameters().map(t -> {
+                                   return toJson(t.getName(),t.getTypeSignature());
+                                }),",");
+                            }be("]");
+                        }be("};");
+                        bs("var rCall =");{
+                            println("callStack : this._callStack,");
+                            println("thisCall : rMethodCall");
+                        }be("};");
+                        println("return this._caller(rCall).then(function (rCallResult) {");
+                        indent();{
+                            bs("if(rCallResult.exception)"); {
+                                println("throw rCallResult.exception;");
+                            }be("}");
+                            if(rmd.isReturnsRemoteObject()) {
+                                println("var robject = rCallResult.robject;");
+                                bs("if(robject !== null && typeof robject !== 'undefined')");
+                                {
+                                    println("return new " + toSimpleName(rmd.getReturnType().getCls()) + "(this._caller,rCallResult.robject);");
+                                }
+                                be("}");
+                                println("return null;");
+                            } else {
+                                println("return " + fromJSon("rCallResult.value",rmd.getReturnType()));
+                            }
+
+                        }
+                        outdent();println("}, function (notOk) {");
+                        indent();
+                        outdent(); println("});");
                     }
                 be("};");}
             }
 
         }
-        public String toJSon(String value, JJTypeSignature typeSignature){
+        /*public String toJSon(String value, JJTypeSignature typeSignature){
             JJTypeSignature.JsonType jsonType = typeSignature.getJsonType();
             if(jsonType.isJsonPrimitive()){
                 return value;
@@ -111,7 +149,7 @@ public class CodeGenRemoteClass {
                 throw new RuntimeException("Not Yet");
             }
             return value + ".toJson";
-        }
+        }*/
 
 
         public String fromJSon(String json, JJTypeSignature typeSignature){

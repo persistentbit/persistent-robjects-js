@@ -1,6 +1,7 @@
 package com.persistentbit.robjects.js;
 
 import com.persistentbit.robjects.js.examples.App;
+import com.persistentbit.sourcegen.SourceGen;
 import org.junit.Test;
 
 /**
@@ -10,7 +11,11 @@ import org.junit.Test;
 public class TestRemoteClassCodeGen {
     @Test
     public void testApiCodeGen(){
-        String s =new CodeGenRemoteClass(new JSCodeGenSettings(JSCodeGenSettings.ModuleType.commonJs, JSCodeGenSettings.CodeType.js5)).generateAll(App.class).writeToString();
-        System.err.println(s);
+        SourceGen sg = new SourceGen();
+        CodeGenRemoteClass cgr =new CodeGenRemoteClass(new JSCodeGenSettings(JSCodeGenSettings.ModuleType.commonJs, JSCodeGenSettings.CodeType.js5));
+        sg.add(cgr.generateHelperClass());
+        sg.add(cgr.generateAll(App.class));
+
+        System.err.println(sg.writeToString());
     }
 }

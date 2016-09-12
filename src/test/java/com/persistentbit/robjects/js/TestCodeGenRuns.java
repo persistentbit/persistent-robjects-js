@@ -4,6 +4,7 @@ import com.persistentbit.core.Tuple2;
 import com.persistentbit.jjson.mapping.JJMapper;
 import com.persistentbit.jjson.nodes.JJPrinter;
 import com.persistentbit.robjects.js.examples.Name;
+import com.persistentbit.robjects.js.examples.ValueWithCollections;
 import com.persistentbit.robjects.js.examples.ValueWithGen;
 import com.persistentbit.sourcegen.SourceGen;
 import org.junit.Test;
@@ -25,6 +26,7 @@ public class TestCodeGenRuns {
         rt.add(cgv.generate(Tuple2.class).writeToString());
         rt.add(cgv.generate(Name.class).writeToString());
         rt.add(cgv.generate(ValueWithGen.class).writeToString());
+        rt.add(cgv.generate(ValueWithCollections.class).writeToString());
         rt.addResources("/RunValueWithGenCode.js");
         Name aVal = new Name("fn","ln");
         ValueWithGen<Name,String> val = new ValueWithGen<>(aVal,new Tuple2<>(aVal,"txt"),new Tuple2<>(1234,new Tuple2<>(aVal,"BVal")),"JustAString");

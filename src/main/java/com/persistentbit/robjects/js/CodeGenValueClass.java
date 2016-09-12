@@ -40,6 +40,7 @@ public class CodeGenValueClass{
         private String className;
 
         private Generator(JJTypeDescription td){
+            super(CodeGenValueClass.this.settings);
             this.td = td;
             this.className = toSimpleName(td.getTypeSignature().getCls());
         }
@@ -137,8 +138,11 @@ public class CodeGenValueClass{
             if(sig.getJsonType().isJsonPrimitive()){
                 return leftValue + " !== " + rightValue ;
             } else if(sig.getJsonType().isJsonCollection()){
+                JJTypeSignature itemSig = sig.getGenerics().values().head();
                 if(sig.getJsonType() == JJTypeSignature.JsonType.jsonArray || sig.getJsonType() == JJTypeSignature.JsonType.jsonSet){
-                    return "!" + settings.getUtilsClassName() + ".arraysEqual(" + leftValue + ", " + rightValue + ", function (left,right) { return !(" + getNotEquals("left","right",sig.getGenerics().values().head()) + "); }";
+                    //return "!" + settings.getUtilsClassName() + ".arraysEqual(" + leftValue + ", " + rightValue + ", function (left,right) { return !(" + getNotEquals("left","right",sig.getGenerics().values().head()) + "); }";
+                    String notEqualsItem = getNotEquals("left","right",itemSig);
+                    return "!(" + settings.getUtilsClassName() + ".arraysEqual(" + leftValue + ", " + rightValue + ", function(left,right) { return !(" + notEqualsItem + "); }))";
                 } else {
                     //map
                     throw new RuntimeException("Not Yet");
@@ -150,31 +154,14 @@ public class CodeGenValueClass{
                 if(sig.getGenerics().isEmpty()) {
                     notEqual =  "!" + leftValue + ".equals(" + rightValue + ")";
                 } else {
-                    notEqual = "(typeof " + leftValue + " === 'object' ? !" + leftValue + ".equals(" + rightValue + ") : " + leftValue + " !== " + rightValue+")";
+                    notEqual = "!" + settings.getUtilsClassName() + ".objectsEqual(" + leftValue+ ", " +rightValue + ")";
+                    //notEqual = "(typeof " + leftValue + " === 'object' ? !" + leftValue + ".equals(" + rightValue + ") : " + leftValue + " !== " + rightValue+")";
                 }
                 return  leftValue + " !== null ? " + notEqual +" : " + rightValue + "!== null";
             }
         }
 
-        private String toJsonData(String value,JJTypeSignature sig){
-            if(sig.getJsonType().isJsonPrimitive()){
-                return value;
-            } else if(sig.getJsonType().isJsonCollection()){
-                if(sig.getJsonType() == JJTypeSignature.JsonType.jsonArray || sig.getJsonType() == JJTypeSignature.JsonType.jsonSet){
-                    return settings.getUtilsClassName() + ".arrayMap(" + value + ", function(" + value + ", function(item) { return " + toJsonData("item",sig.getGenerics().values().head()) + "})";
-                } else {
-                    //Map
-                    throw new RuntimeException("Not Yet");
-                }
 
-            } else if(sig.getJsonType() == JJTypeSignature.JsonType.jsonObject){
-                if(sig.getGenerics().isEmpty()) {
-                    return value + ".jsonData()";
-                }
-                return settings.getUtilsClassName()+".getJsonData(" + value+ ")";
-            }
-            throw new RuntimeException("Should not happen: " + sig.getJsonType());
-        }
 
         private String isDefined(String value){
             return "(" + value + " !== null && typeof " + value + "!== 'undefined')";
@@ -222,12 +209,21 @@ public class CodeGenValueClass{
         }
 
         private String propFromJson(boolean asValue,String json,String name,JJTypeSignature sig){
-            if(sig.getJsonType() != JJTypeSignature.JsonType.jsonObject){
+            if(sig.getJsonType().isJsonPrimitive()){
                 if(asValue){
                     return json;
                 }
-                return "function(a) { return a; }";
+                return settings.getUtilsClassName() + ".self";
 
+            }
+            if(sig.getJsonType().isJsonCollection()){
+                if(sig.getJsonType() == JJTypeSignature.JsonType.jsonArray || sig.getJsonType() == JJTypeSignature.JsonType.jsonSet){
+                    String itemMapper = propFromJson(false,"json","dontKnow",sig.getGenerics().values().head());
+                    return settings.getUtilsClassName() +".arrayMap(" + json + ", " + itemMapper + ")";
+                } else {
+                    //Map
+                    throw new RuntimeException("Not Yet");
+                }
             }
 
 

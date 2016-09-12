@@ -142,41 +142,4 @@ public class SourceGen
 
 
 
-
-
-    /*static public void main(String...args){
-        SourceGen sout = new SourceGen();
-        JavaImports imports = sout.add(new JavaImports("be.schaubroeck.bevolking"));
-
-
-        imports.add("be.schaubroeck.bevolking.po.Persoon");
-        imports.add(List.class,ArrayList.class);
-        sout.bs("public class PersoonPO implements Persoon");
-        SourceGen clsContent  = sout.subSource();
-        SourceGen f = sout.subSource();
-        SourceGen c = sout.subSource();
-        SourceGen m = sout.subSource();
-        sout.be();
-
-
-        f.println("//Fields");
-        c.println("");
-        m.println("//Methods");
-
-        f.println("private final int id;");
-        f.println("private final Rrn rrn;");
-        c.bs("public PersoonPO(int id, Rrn rrn)");
-            c.println("this.id = id;");
-            c.println("this.rrn = rrn");
-        c.be();
-        JavaMethod mToString = new JavaMethod(m,"String","toString").setOverride();
-        mToString.out.print("return ").str("Persoon").println(";");
-
-        JavaClass jc = new JavaClass(sout,imports,"TestClass");
-        jc.field("int","id").createGetter();
-        jc.field("String","name").createGetter().createSetter();
-
-
-        sout.write(System.out);
-    }*/
 }
