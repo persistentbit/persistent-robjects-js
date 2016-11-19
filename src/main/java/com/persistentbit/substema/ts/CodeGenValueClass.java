@@ -1,18 +1,14 @@
-package com.persistentbit.robjects.js;
+package com.persistentbit.substema.ts;
 
-import com.persistentbit.core.Tuple2;
-import com.persistentbit.core.collections.PList;
-import com.persistentbit.core.collections.PStream;
-import com.persistentbit.jjson.mapping.description.JJPropertyDescription;
-import com.persistentbit.jjson.mapping.description.JJTypeDescription;
-import com.persistentbit.jjson.mapping.description.JJTypeSignature;
-import com.persistentbit.sourcegen.SourceGen;
+import com.persistentbit.core.sourcegen.SourceGen;
 
 /**
- * Created by petermuys on 3/09/16.
+ * @author Peter Muys
+ * @since 3/09/16
  */
 public class CodeGenValueClass extends SourceGen{
-    private final JJTypeDescription td;
+	/*
+	private final JJTypeDescription td;
     private String className;
     public CodeGenValueClass(JJTypeDescription typeDescription){
         this.td = typeDescription;
@@ -119,4 +115,5 @@ public class CodeGenValueClass extends SourceGen{
     private String firstCap(String name){
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
+    */
 }

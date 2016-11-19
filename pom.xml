@@ -2,21 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
     <groupId>com.persistentbit</groupId>
-    <artifactId>persistent-robjects-js</artifactId>
+    <artifactId>substema-ts</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>PERSISTENT-ROBJECTS-JS</name>
-    <description>JavaScript and TypeScript code generator for RObjects (java remote objects)</description>
-    <url>https://github.com/persistentbit/persistent-robjects-js.git</url>
+    <name>SUBSTEMA-TS</name>
+    <description>Typescript Substema Client Code Generator</description>
+    <url>https://github.com/persistentbit/substema.git</url>
 
 
     <scm>
-        <connection>scm:git:git@github.com:persistentbit/persistent-robjects-js.git</connection>
-        <url>scm:git:git@github.com:persistentbit/persistent-robjects-js.git</url>
-        <developerConnection>scm:git:git@github.com:persistentbit/persistent-robjects-js.git</developerConnection>
-      <tag>HEAD</tag>
+        <connection>scm:git:git@github.com:persistentbit/substema-ts.git</connection>
+        <url>scm:git:git@github.com:persistentbit/substema-ts.git</url>
+        <developerConnection>scm:git:git@github.com:persistentbit/substema-ts.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
+
 
     <inceptionYear>2016</inceptionYear>
     <developers>
@@ -36,7 +38,7 @@
 
     <properties>
         <junit.version>4.12</junit.version>
-        <persistent-robjects.version>1.0.0-SNAPSHOT</persistent-robjects.version>
+        <substema.version>1.0.0-SNAPSHOT</substema.version>
     </properties>
 
     <distributionManagement>
@@ -110,8 +112,8 @@
 
         <dependency>
             <groupId>com.persistentbit</groupId>
-            <artifactId>persistent-robjects</artifactId>
-            <version>${persistent-robjects.version}</version>
+            <artifactId>substema</artifactId>
+            <version>${substema.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
